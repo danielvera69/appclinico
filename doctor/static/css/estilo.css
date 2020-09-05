@@ -1,0 +1,23 @@
+#inicio {
+    margin-top: 4% !important;
+}
+
+.inner {
+    overflow: hidden;
+}
+
+.inner img {
+    transition: all 1.5s ease;
+}
+
+.inner:hover img {
+    transform: scale(1.5);
+    cursor: zoom-in;
+}
+
+.color:hover {
+    color: green;
+    font-size: 15px;
+    cursor: zoom-in;
+
+}
