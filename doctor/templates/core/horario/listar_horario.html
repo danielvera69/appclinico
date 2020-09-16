@@ -1,0 +1,187 @@
+{% extends 'base.html' %}
+{% block header %}
+{% include 'header.html' %}
+{% load static %}
+{% endblock %}
+
+{% block main %}
+
+<div class="container-fluid" style="margin-top: 3rem">
+    <div class="row">
+        <div class="col">
+            <div class="card">
+                <div class="fondo card-header rounded-top bg-primary shadow  p-0 ">
+                    <div class="row ">
+                        <div class="card-title col-md-8 mt-2">
+                            <h2 class="text-light ml-2 font-italic font-weight-bold">
+                                Consulta de Horarios de Atenciones
+                            </h2>
+                        </div>
+                        <div class="col-md-4 ">
+                            <div class="float-right m-3">
+                                <a href="{% url 'core:crear_horario' %}" id="id_nuevo" class="btn btn-success">
+                                    Nuevo Registro
+                                </a>
+
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="card-body table-responsive p-0">
+                    <div class="row">
+                        <div class="col">
+                            <table class="table table-hover table-striped  mt-1 ">
+                                <thead class="bg-success text-light">
+                                    <tr class="h2">
+                                        <th>Dia</th>
+                                        <th>Desde</th>
+                                        <th>Hasta</th>
+                                        <th class="text-center">Estado</th>
+                                        <th class="text-center">Acciones</th>
+
+                                    </tr>
+                                </thead>
+                                <tbody class="delegacion-container" id="contenedor">
+                                    {% for horario in horarios%}
+                                    <tr class="text-justify fondo">
+                                        <td>{{ horario.dia_semana}}
+                                        </td>
+                                        <td>{{horario.desde}}</td>
+                                        <td>{{horario.hasta}}</td>
+                                        {% if horario.estado %}
+                                        <td class="text-center"><span class="badge badge-pill badge-primary">
+                                                Activo</span>
+                                        </td>
+                                        {% else%}
+                                        <td class="text-center"><span class="badge badge-pill badge-danger">
+                                                Deshuso</span>
+                                        </td>
+                                        {% endif %}
+
+                                        <td>
+                                            <div class="btn-toolbar d-flex justify-content-center" role="toolbar"
+                                                aria-label="Toolbar with button groups">
+                                                <div class="btn-group btn-group-sm   " role="group"
+                                                    aria-label="First group">
+
+                                                    <a href="{% url 'core:editar_horario' horario.id %}"
+                                                        class="btn btn-outline-primary" data-toggle="tooltip"
+                                                        data-placement="bottom" title=""
+                                                        data-original-title="Modificar Datos Paciente"><i
+                                                            class="material-icons">create</i></a>
+                                                    <a href="#" rel="action"
+                                                        data-json='{"action":"elim","id":"{{ horario.id }}"}'
+                                                        class="btn btn-outline-danger delegacion-item"
+                                                        data-toggle="tooltip" data-placement="top" title=""
+                                                        data-original-title="Eliminar Paciente"><i
+                                                            class="material-icons">delete</i>
+                                                    </a>
+
+                                                </div>
+                                            </div>
+                                            <!-- onclick="abrir_modal_eliminacion('{% url 'core:eliminar_horario' horario.id %}')" -->
+                                        </td>
+                                    </tr>
+                                    {% empty %}
+                                    <div class="alert alert-dark alert-dismissible fade show mt- bg-info rounded shadow"
+                                        role="alert">
+                                        <div class="d-flex justify-content-center"><img
+                                                src="{% static 'imagenes/mensaje2.png' %}"
+                                                class="img-thumbnail rounded-circle" width="50px">
+                                        </div>
+
+                                        <h1 class="text-center text-warning font-weight-bold  ">Mensaje del Sistema</h1>
+
+                                        <h2 class="ml-4 badge  badge-danger" style="font-size: 2vw;"> No existen
+                                            Horarios de
+                                            Atencion
+                                            registrados!!!</h2>
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                    </div>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block frmodal %}
+<!-- inicio formulario Modal para Eliminar -->
+
+<div class="modal fade" id="myModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form name="frmEliminar" id="frmEliminar" method="POST" action="{% url 'core:eliminar_horario' 0 %} ">
+                {% csrf_token %}
+                <div class="modal-header bg-primary text-light">
+                    <h3 class="modal-title ml-5 font-weight-bold">Mensaje Del Sistema</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="id" value="">
+                    <input type="hidden" name="action" value="elim">
+                    <div class="h3 text-center">
+                        <label class="text-primary font-weight-bold">Esta Seguro De Eliminar El Horario Del
+                            Dia:</label>
+                        <span class="text-light font-weight-bold badge badge-danger badge-pill"
+                            id="descripcion"></span><br>
+
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Eliminar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- Final Formulario Modal-->
+{% endblock %}
+
+{% block js %}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+<script src="https://cdn.jsdelivr.net/npm/promise-polyfill"></script>
+{% endblock %}
+
+{% block jscript %}
+<script>
+
+
+    $(function () {
+        $('#contenedor').on('click', 'a[rel="action"]', function () {
+            var data = $(this).data('json'),
+                action = data.action,
+                id = data.id;
+
+            if (action == 'elim') {
+
+                var desc = $(this).parents('tr').children('td').eq(0).html();
+                $('#descripcion').html(desc);
+                $('#frmEliminar #id').val(id);
+
+                $('#myModal').modal('show');
+                return;
+            }
+
+            window.location = '{{ ruta }}?action=' + action + '&id=' + id;
+        });
+    });
+
+
+</script>
+{% endblock %}
